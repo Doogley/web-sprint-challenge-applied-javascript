@@ -1,5 +1,6 @@
-const Card = (article) => {
-  // TASK 5
+import axios from 'axios';
+ 
+ // TASK 5
   // ---------------------
   // Implement this function, which should return the markup you see below.
   // It takes as its only argument an "article" object with `headline`, `authorPhoto` and `authorName` properties.
@@ -17,10 +18,39 @@ const Card = (article) => {
   //   </div>
   // </div>
   //
-}
+ 
+  const Card = (article) => {
 
-const cardAppender = (selector) => {
-  // TASK 6
+    const mainCard = document.createElement('div')
+    const headline = document.createElement('div')
+    const author = document.createElement('div')
+    const imgCon = document.createElement('div')
+    const authorPic = document.createElement('img')
+    const authorName = document.createElement('span')
+  
+    mainCard.classList.add('card')
+    headline.classList.add('headline')
+    author.classList.add('author')
+    imgCon.classList.add('img-container')
+  
+  
+    authorPic.src = `${article.authorPhoto}`
+    headline.textContent = `${article.headline}`
+    authorName.textContent = `By ${article.authorName}`
+  
+    mainCard.appendChild(headline)
+    mainCard.appendChild(author)
+    author.appendChild(imgCon)
+    imgCon.appendChild(authorPic)
+    author.appendChild(authorName)
+  
+    mainCard.addEventListener('click', event => {
+      console.log(headline)
+    })
+    return mainCard
+
+  }
+// TASK 6
   // ---------------------
   // Implement this function that takes a css selector as its only argument.
   // It should obtain articles from this endpoint: `http://localhost:5001/api/articles` (test it with console.log!!).
@@ -28,6 +58,24 @@ const cardAppender = (selector) => {
   // Create a card from each and every article object in the response, using the Card component.
   // Append each card to the element in the DOM that matches the selector passed to the function.
   //
-}
+
+  const cardAppender = (selector) => {
+
+    const parentElement = document.querySelector(selector)
+    axios.get(`http://localhost:5001/api/articles`)
+      .then(response => {
+      const objects = response.data.articles
+      for (const property in objects) {
+        const propList = objects[property]
+        propList.forEach(element => {
+          parentElement.appendChild(Card(element))
+        })
+      }
+      })
+      .catch(err => {
+        console.error(err)
+      })
+  }
+ 
 
 export { Card, cardAppender }
